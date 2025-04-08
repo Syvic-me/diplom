@@ -1,5 +1,0 @@
-DB_PASSWORD = '12321ss'
-DB_NAME = 'forum'
-DB_USER = 'yungs'
-DB_HOST = 'localhost'
-DB_PORT = '5432'
