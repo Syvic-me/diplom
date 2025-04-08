@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subject.title }}{% endblock %}
+
+{% block content %}
+  <div class="subject-detail">
+    <div class="subject-detail-box" style="background: #081B29; border-radius: 30px; border: 6px #00ABF0 solid">
+        <div class="subject-detail-title"><h1>{{ subject.title }}</h1></div>
+        <div class="subject-detail-category"><h2>#{{subject.category}}</h2></div>
+
+        <div class="subject-detail-body">
+          <p class="body-detail">
+            <b>{{ subject.body|linebreaks }}</b>
+          </p>
+        </div>
+        <div class="footer-subject">
+          <div class="like_post">
+            <form class="like-form" method="post">
+              {% csrf_token %}
+              {% if request.user.is_authenticated %}
+                <p><input class="like-box" name="like" type="submit" value="{% if user not in subject.liked.all %} like 
+                  {% else %} unlike {% endif %}"> {{ subject.num_likes }}</p>
+              {% endif %}
+            </form>
+          </div>
+          
+          <div class="subject-detail-date"><p class="date">
+            Published {{ subject.publish }} by <b>{{ subject.author }}</b>
+          </p>
+          </div>
+        </div>
+      </div>
+
+    <form class="delete-subject" action="{% url 'main_page:delete_subject' subject.id %}" method="post">
+        {% csrf_token %}
+        <button class="delete-detail-btn" type="submit">Delete subject</button>
+    </form>
+
+    <div class="comment-box">
+        {% with comments.count as total_comments %}
+          <div class="total-comments-title">
+            <h2>
+              {{ total_comments }} comment{{ total_comments|pluralize }}
+            </h2>
+          </div>
+        {% endwith %}
+        {% for comment in comments %}
+          <div class="comments">
+            <div class="comment-box" style="background: #081B29; border-radius: 15px; border: 6px #00ABF0 solid">
+              <div class="comment-align">
+                <div class="comment-name"><a href="{% url 'main_page:profile' comment.name.id %}">{{ comment.name }}</a></div>
+                <div class="comment-date">{{ comment.created }}</div>
+              </div>  
+              <div class="comment-body">{{ comment.body|linebreaks }}</div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-comments"><p>There are no comments yet.</p></div>
+        {% endfor %}
+        <div class="form-box">
+          <div class="form-com">
+            <div class="title-comment-form"><h2 >Add a new comment</h2></div>
+            <form method="post" novalidate>
+              <div class="form-label">
+                <div class="form-label-p">
+                {{ comment_form.as_p }}
+                {% csrf_token %}
+                </div>
+              </div>
+              <p><input class="add-comment-btn" type="submit" value="Add comment"></p>
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}
